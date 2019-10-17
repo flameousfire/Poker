@@ -274,7 +274,27 @@ void roundrun()
 }
 };
 
-
+void holdemhand(Player& who, std::vector<int> table)
+{
+    std::vector<int> all;
+    all.insert(all.end(), who.hand.begin(), who.hand.end());
+    all.insert(all.end(),table.begin(), table.end());
+    std::vector<int> best = table;
+    printhand(all);
+    std::cout << "\n";
+    for (int i = 0; i < all.size(); ++i)
+    {
+        for (int j = i + 1; j < all.size(); ++j)
+        {
+            std::vector<int> tmp = all;
+            tmp.erase(tmp.begin() + i);
+            tmp.erase(tmp.begin() + j - 1);
+            if (comparehands(best, tmp) == 2)
+                best = tmp;
+        }
+    }
+    who.hand = best;
+}
 
 int main()
 {
@@ -284,20 +304,11 @@ for (int i = 1; i <= 52; ++i)
     deck.push_back(i);
 }
 
-
-for (int i = 0; i < 4; ++i)
+    std::vector<int> table;
     playerlist.emplace_back(Player());
-
-    while (playerlist.size() > 1)
-    {
-        std::cout << "New round begins! \n";
-        Gameround round = Gameround();
-        round.roundrun();
-        int stop = 0;
-        std::cout << "Press any key to continue to next round.";
-        std::cin >> stop;
-    }
-
-
-
+    playerlist[0].hand = {1 , 2};
+    dealcards(table);
+    holdemhand(playerlist[0], table);
+    printhand(table);
+    printhand(playerlist[0].hand);
 }
